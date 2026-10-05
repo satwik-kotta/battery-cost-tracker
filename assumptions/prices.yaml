@@ -1,0 +1,45 @@
+# How market prices become input-material prices.
+imf_series:            # IMF Primary Commodity Price System, monthly, USD per metric ton
+  PLITH: lithium_metal
+  PCOBA: cobalt
+  PNICK: nickel
+  PMANGELE: manganese
+  PCOPP: copper
+  PALUM: aluminium
+
+# The IMF lithium series is lithium metal. Cells use lithium carbonate or hydroxide, so carbonate is
+# estimated from the metal series by a straight-line fit to published carbonate prices.
+lithium_carbonate_anchors:      # (period, carbonate USD per ton, source)
+  - {period: "2021", usd_t: 11700, source: "USGS Mineral Commodity Summaries 2026, annual average battery-grade lithium carbonate"}
+  - {period: "2022", usd_t: 63700, source: "USGS MCS 2026"}
+  - {period: "2023", usd_t: 39000, source: "USGS MCS 2026"}
+  - {period: "2024", usd_t: 11800, source: "USGS MCS 2026"}
+  - {period: "2025", usd_t: 9000,  source: "USGS MCS 2026"}
+  - {period: "2024-01", usd_t: 14500, source: "USGS MCS 2025, China spot c.i.f."}
+  - {period: "2024-11", usd_t: 9400,  source: "USGS MCS 2025, China spot c.i.f."}
+  - {period: "2025-01", usd_t: 9300,  source: "USGS MCS 2026, China spot c.i.f."}
+  - {period: "2025-11", usd_t: 10300, source: "USGS MCS 2026, China spot c.i.f."}
+lithium_carbonate_floor_usd_t: 4000   # the fitted line is not allowed below this. Author assumption.
+hydroxide_premium: 1.00               # hydroxide price per unit of lithium relative to carbonate. Author assumption (near parity).
+
+# Cathode price = metal content at market price + a processing adder that covers precursor making,
+# calcination and supplier margin. Adders are calibrated once to a published cathode price, then held fixed.
+cathode_processing_usd_kg:
+  NMC811: {calibrate_to: {period: "2024-05", usd_kg: 22.6, source: "CellEst 3.0, NMC 811 price May 2024"}}
+  NMC622: {same_as: NMC811}
+  NCA:    {same_as: NMC811}
+  LFP:    {calibrate_to: {period: "2024", usd_kg: 6.0, source: "CellEst 3.0, LFP price (date not stated; 2024 average used)"}}
+  NFPP:   {fixed_price_usd_kg: 4.13, source: "CellEst 3.0, NFPP price April 2025. Sodium and iron inputs are cheap and stable, so held constant."}
+out_of_sample_checks:           # published cathode prices NOT used for calibration
+  - {cathode: LFP,    period: "2023", usd_kg: 13.0, source: "Argonne ANL/CSE-24/1 Table 11"}
+  - {cathode: NMC622, period: "2023", usd_kg: 31.9, source: "Argonne ANL/CSE-24/1 Table 11"}
+
+other_materials_usd_kg:
+  graphite: {value: 7.5, source: "CellEst 3.0"}
+  hard_carbon: {value: 5.2, source: "CellEst 3.0, September 2024"}
+  binder_and_carbon: {value: 11.0, source: "Argonne ANL/CSE-24/1 Table 12: binder $15/kg, carbon $7/kg, equal parts"}
+  electrolyte_solvent: {value: 1.5, source: "Author assumption"}
+  lipf6_conversion: {value: 6.0, source: "Author assumption: cost of making LiPF6 beyond its lithium content"}
+  sodium_electrolyte: {value: 3.0, source: "Author assumption"}
+  copper_foil_premium: {value: 4.0, source: "Author assumption: rolling fee over LME copper"}
+  aluminium_foil_premium: {value: 2.0, source: "Author assumption: rolling fee over LME aluminium"}

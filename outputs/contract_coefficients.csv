@@ -1,0 +1,6 @@
+chemistry,usd_kwh_per_usd_kg_lithium_carbonate,usd_kwh_per_usd_kg_nickel,usd_kwh_per_usd_kg_cobalt,usd_kwh_per_usd_kg_manganese,usd_kwh_per_usd_kg_copper,usd_kwh_per_usd_kg_aluminium,usd_kwh_per_10pct_lithium_carbonate,usd_kwh_per_10pct_nickel,usd_kwh_per_10pct_cobalt,usd_kwh_per_10pct_manganese,usd_kwh_per_10pct_copper,usd_kwh_per_10pct_aluminium
+NMC811,0.5898,0.709,0.089,0.083,0.2895,0.1309,1.1103,1.1876,0.497,0.024,0.4149,0.0425
+NMC622,0.6182,0.5581,0.1868,0.1741,0.2892,0.1307,1.1638,0.9348,1.0432,0.0504,0.4144,0.0425
+NCA,0.5909,0.7988,0.0446,0.0,0.2935,0.1531,1.1123,1.3381,0.2489,0.0,0.4206,0.0498
+LFP,0.5383,0.0,0.0,0.0,0.412,0.1862,1.0133,0.0,0.0,0.0,0.5905,0.0605
+NFPP,0.0,0.0,0.0,0.0,0.0,0.4612,0.0,0.0,0.0,0.0,0.0,0.1499

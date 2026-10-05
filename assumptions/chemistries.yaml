@@ -1,0 +1,42 @@
+# Cathode and anode chemistries. Compositions are chemical formulas; everything else is derived from them.
+# q = reversible specific capacity (mAh per g of active material), v = average cell voltage vs the paired anode.
+cathodes:
+  NMC811:
+    label: NMC 811
+    formula: {Li: 1, Ni: 0.8, Mn: 0.1, Co: 0.1, O: 2}
+    q_mAh_g: 200
+    v_cell: 3.70
+    lithium_salt: hydroxide
+    source: "Capacity and voltage: CellEst 3.0 (Wesselkamper et al. 2025); matches Orangi et al. 2024 (200 mAh/g)"
+  NMC622:
+    label: NMC 622
+    formula: {Li: 1, Ni: 0.6, Mn: 0.2, Co: 0.2, O: 2}
+    q_mAh_g: 191
+    v_cell: 3.705
+    lithium_salt: carbonate
+    source: "Argonne ANL/CSE-24/1, Table 9"
+  NCA:
+    label: NCA (high nickel)
+    formula: {Li: 1, Ni: 0.90, Co: 0.05, Al: 0.05, O: 2}
+    q_mAh_g: 205
+    v_cell: 3.65
+    lithium_salt: hydroxide
+    source: "Author assumption: high-nickel NCA with about 5% cobalt, as used in current cylindrical EV cells. Not from a cited table."
+  LFP:
+    label: LFP
+    formula: {Li: 1, Fe: 1, P: 1, O: 4}
+    q_mAh_g: 157
+    v_cell: 3.25
+    lithium_salt: carbonate
+    source: "Capacity: Argonne ANL/CSE-24/1, Table 10. Voltage: between CellEst 3.0 (3.3 V vs Li) and cell-level 3.2 V."
+  NFPP:
+    label: Sodium-ion (NFPP)
+    formula: {Na: 4, Fe: 3, P: 4, O: 15}        # Na4Fe3(PO4)2(P2O7)
+    q_mAh_g: 128
+    v_cell: 3.0
+    lithium_salt: none
+    source: "CellEst 3.0: 128 mAh/g, 3.1 V vs Na; 0.2 V hard-carbon anode gives about 2.9-3.0 V cell"
+anodes:
+  graphite: {label: Graphite, q_mAh_g: 360, source: "CellEst 3.0; Orangi et al. 2024"}
+  hard_carbon: {label: Hard carbon, q_mAh_g: 325, source: "CellEst 3.0"}
+atomic_mass: {Li: 6.941, Ni: 58.693, Co: 58.933, Mn: 54.938, Al: 26.982, Fe: 55.845, P: 30.974, O: 15.999, Na: 22.990, C: 12.011, F: 18.998}

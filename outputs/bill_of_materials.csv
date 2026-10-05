@@ -1,0 +1,6 @@
+chemistry,cathode_active_per_kwh,anode_active_per_kwh,binder_and_carbon_per_kwh,electrolyte_per_kwh,electrolyte_salt_per_kwh,separator_m2_per_kwh,copper_foil_per_kwh,aluminium_foil_per_kwh,cathode_Li_kg_per_kwh,cathode_Ni_kg_per_kwh,cathode_Mn_kg_per_kwh,cathode_Co_kg_per_kwh,exposure_lithium_carbonate_kg_per_kwh,exposure_nickel_kg_per_kwh,exposure_cobalt_kg_per_kwh,exposure_manganese_kg_per_kwh,exposure_copper_kg_per_kwh,exposure_aluminium_kg_per_kwh,cathode_Al_kg_per_kwh,cathode_Fe_kg_per_kwh,cathode_P_kg_per_kwh,cathode_Na_kg_per_kwh
+NMC811,1.4689,0.8976,0.0986,0.4994,0.0624,7.9318,0.2895,0.1309,0.1048,0.709,0.083,0.089,0.5898,0.709,0.089,0.083,0.2895,0.1309,,,,
+NMC622,1.536,0.8964,0.1014,0.4987,0.0623,7.9211,0.2892,0.1307,0.11,0.5581,0.1741,0.1868,0.6182,0.5581,0.1868,0.1741,0.2892,0.1307,,,,
+NCA,1.4527,0.9099,0.0984,0.5063,0.0633,8.0405,0.2935,0.1327,0.105,0.7988,,0.0446,0.5909,0.7988,0.0446,0.0,0.2935,0.1531,0.0204,,,
+LFP,2.1302,1.0219,0.1313,0.8027,0.1003,11.2876,0.412,0.1862,0.0937,,,,0.5383,0.0,0.0,0.0,0.412,0.1862,,0.7541,0.4183,
+NFPP,2.8306,1.2263,0.169,1.0145,0.1268,13.9752,0.0,0.4612,,,,,0.0,0.0,0.0,0.0,0.0,0.4612,,0.7607,0.5626,0.4176

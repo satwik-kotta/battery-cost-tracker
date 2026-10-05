@@ -1,0 +1,178 @@
+<title>Battery Cell Cost Tracker</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one column of ruled sections on a 1080px measure; charts pair up two-across and stack on phones. */
+:root{
+  --bg:#f7f8f6; --surface:#fcfcfb; --ink:#10140f; --ink2:#4d524b; --ink3:#7b8078; --rule:#dfe2dc; --grid:#e9ebe6;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --good:#0ca30c; --crit:#d03b3b; --warn-bg:#fdf1d6; --warn-ink:#5c4300; --warn-rule:#fab219;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif; --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#131412; --surface:#1a1a19; --ink:#f4f5f2; --ink2:#c3c5bd; --ink3:#8f938a; --rule:#33362f; --grid:#282a26;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --good:#0ca30c; --crit:#e66767; --warn-bg:#3a2f10; --warn-ink:#f6dc9c; --warn-rule:#fab219; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#131412; --surface:#1a1a19; --ink:#f4f5f2; --ink2:#c3c5bd; --ink3:#8f938a; --rule:#33362f; --grid:#282a26;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --good:#0ca30c; --crit:#e66767; --warn-bg:#3a2f10; --warn-ink:#f6dc9c; --warn-rule:#fab219; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:20px;padding-block:32px 56px;display:flex;flex-direction:column;gap:36px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,5vw,40px);line-height:1.05;margin:0;letter-spacing:-.02em;text-wrap:balance}
+h2{font-family:var(--display);font-weight:700;font-size:22px;margin:0;letter-spacing:-.01em;text-wrap:balance}
+h3{font-size:14px;font-weight:600;margin:0}
+p{margin:0;max-width:68ch;color:var(--ink2)}
+.sub{color:var(--ink3);font-size:13px;font-family:var(--mono)}
+header{display:flex;flex-direction:column;gap:10px}
+.notice{background:var(--warn-bg);color:var(--warn-ink);border-left:4px solid var(--warn-rule);padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.notice strong{font-weight:600}
+section{display:flex;flex-direction:column;gap:16px;border-top:1px solid var(--rule);padding-top:20px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px}
+.kpi{display:flex;flex-direction:column;gap:2px}
+.kpi .l{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3)}
+.kpi .v{font-family:var(--display);font-weight:500;font-size:30px;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .n{font-size:13px;color:var(--ink2)}
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:28px}
+.fig{display:flex;flex-direction:column;gap:8px;min-width:0}
+.plot{position:relative;background:var(--surface);border:1px solid var(--rule)}
+.plot svg{display:block;width:100%;height:auto}
+.plot text{font-family:var(--mono);font-size:11px;fill:var(--ink3)}
+.plot text.lab{fill:var(--ink2)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--ink2)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12px;padding:6px 8px;border-radius:3px;white-space:nowrap;z-index:2;font-variant-numeric:tabular-nums}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{font-weight:500;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule);white-space:nowrap}
+td{padding:8px 10px;border-bottom:1px solid var(--grid);vertical-align:top}
+td.n,th.n{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;white-space:nowrap}
+.pill::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--good)}
+.pill.fail::before{background:var(--crit);border-radius:1px}
+.scroll{max-height:420px;overflow:auto;border:1px solid var(--rule);background:var(--surface)}
+.scroll td,.scroll th{padding:7px 8px}
+.scroll th{position:sticky;top:0;background:var(--surface)}
+.find{margin:4px 0 0;padding-left:20px;max-width:72ch;display:flex;flex-direction:column;gap:4px;font-weight:500}
+footer{color:var(--ink3);font-size:12.5px;border-top:1px solid var(--rule);padding-top:16px}
+</style>
+<div class="wrap">
+<header>
+  <h1>Battery Cell Cost Tracker</h1>
+  <div class="sub" id="range"></div>
+  <p>What an EV battery cell should cost to make, recomputed every month from market prices of lithium, nickel, cobalt, manganese, copper and aluminium. The bill of materials is derived from each chemistry's formula and cell design, not taken from a table.</p>
+  <ul class="find" id="findings"></ul>
+</header>
+<section><div class="kpis" id="kpis"></div></section>
+<section>
+  <h2>Cell cost by chemistry</h2>
+  <p id="hist-text"></p>
+  <div class="fig"><div class="legend" id="lg-hist"></div><div class="plot" id="c-hist"></div></div>
+</section>
+<section>
+  <h2>What moved cost in the last 12 months</h2>
+  <p id="attr-text"></p>
+  <div class="pair">
+    <div class="fig"><h3 id="h-a1"></h3><div class="plot" id="c-a1"></div></div>
+    <div class="fig"><h3 id="h-a2"></h3><div class="plot" id="c-a2"></div></div>
+  </div>
+</section>
+<section>
+  <h2>Metal content and contract coefficients</h2>
+  <p>Kilograms of each market-priced input per kWh of sellable cell. Because cost is linear in these, they are also the coefficients for an index-linked supply contract: a $1/kg move in the input moves cell cost by this many dollars per kWh.</p>
+  <div class="tw"><table id="coef"></table></div>
+</section>
+<section>
+  <h2>How far could cost move in 12 months?</h2>
+  <p id="risk-text"></p>
+  <div class="fig"><h3>Change in cell cost over the next 12 months, USD per kWh: middle 90% of simulated outcomes, dot at the median</h3><div class="plot" id="c-risk"></div></div>
+</section>
+<section>
+  <h2>When does sodium-ion undercut LFP?</h2>
+  <p id="na-text"></p>
+  <div class="fig"><h3>Estimated battery-grade lithium carbonate price, USD per ton</h3><div class="plot" id="c-li"></div></div>
+</section>
+<section>
+  <h2>Which automakers are most exposed?</h2>
+  <p id="am-text"></p>
+  <div class="pair">
+    <div class="fig"><h3 id="h-am"></h3><div class="plot" id="c-am"></div></div>
+    <div class="fig"><h3>By automaker, 2025 US sales</h3><div class="scroll"><table id="am"></table></div></div>
+  </div>
+</section>
+<section>
+  <h2>Does the model match published figures?</h2>
+  <p id="val-text"></p>
+  <div class="tw"><table id="val"></table></div>
+</section>
+<section>
+  <h2>Which design assumptions matter?</h2>
+  <p>Change in the latest cell cost, USD per kWh, when one design input moves across a plausible range and everything else is held.</p>
+  <div class="tw"><table id="sens"></table></div>
+</section>
+<section>
+  <h2>Limits</h2>
+  <p>Lithium carbonate is inferred from the IMF lithium-metal series, not observed. Costs here are market-price replacement costs: automakers buy under contracts with lags and hedges, so what they pay moves later and less. Pack sizes and chemistry shares by vehicle are compiled by hand from public specifications. Several non-metal inputs are author assumptions, each labelled in the assumptions files.</p>
+</section>
+<footer id="foot"></footer>
+</div>
+<script>
+const D=/*DATA*/;
+const $=id=>document.getElementById(id), css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const usd=n=>'$'+Math.round(n).toLocaleString('en-US');
+const usdc=n=>'$'+(n>=1e9?(n/1e9).toFixed(2)+'B':n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(0)+'k':Math.round(n));const numc=n=>n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(0)+'k':Math.round(n);
+const pct=(n,d=1)=>(n*100).toFixed(d)+'%';
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function svgEl(host,H){host.innerHTML='';const W=Math.max(300,host.clientWidth);host.insertAdjacentHTML('beforeend',`<svg viewBox="0 0 ${W} ${H}" role="img"></svg><div class="tip" hidden></div>`);return{W,svg:host.firstChild,tip:host.lastChild}}
+function showTip(host,tip,html,x,y){tip.innerHTML=html;tip.hidden=false;const w=tip.offsetWidth;tip.style.left=Math.min(Math.max(4,x-w/2),host.clientWidth-w-4)+'px';tip.style.top=Math.max(4,y-tip.offsetHeight-10)+'px'}
+function ticks(max,n=4){const raw=max/n,p=Math.pow(10,Math.floor(Math.log10(raw))),s=[1,2,2.5,5,10].find(m=>m*p>=raw)*p;const out=[];for(let v=0;v<=max+1e-9;v+=s)out.push(v);if(out[out.length-1]<max)out.push(out[out.length-1]+s);return out}
+function legend(id,items){$(id).innerHTML=items.map(([n,c])=>`<span><i style="background:var(${c})"></i>${esc(n)}</span>`).join('')}
+function lineChart(id,labels,series,fmt,ref){const host=$(id),H=260,{W,svg,tip}=svgEl(host,H),m={l:52,r:14,t:14,b:28};
+  const tk=ticks(Math.max(...series.flatMap(s=>s.v),ref?ref.v:0)),ymax=tk[tk.length-1],x=i=>m.l+i*(W-m.l-m.r)/(labels.length-1),y=v=>H-m.b-v/ymax*(H-m.t-m.b);
+  let h=tk.map(t=>`<line x1="${m.l}" x2="${W-m.r}" y1="${y(t)}" y2="${y(t)}" stroke="${css('--grid')}"/><text x="${m.l-8}" y="${y(t)+4}" text-anchor="end">${fmt(t)}</text>`).join('');
+  const step=Math.ceil(labels.length/Math.max(2,Math.floor((W-m.l-m.r)/(String(labels[0]).length*7.5+18))));labels.forEach((l,i)=>{if(i%step==0)h+=`<text x="${x(i)}" y="${H-9}" text-anchor="middle">${esc(l)}</text>`});
+  series.forEach(s=>{h+=`<path d="${s.v.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join('')}" fill="none" stroke="${css(s.c)}" stroke-width="2" stroke-linejoin="round"/>`});
+  if(ref){h+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y(ref.v)}" y2="${y(ref.v)}" stroke="${css('--ink2')}" stroke-dasharray="5 4"/><text class="lab" x="${m.l+6}" y="${y(ref.v)-6}">${esc(ref.label)}</text>`}
+  h+=`<line id="${id}-x" y1="${m.t}" y2="${H-m.b}" stroke="${css('--ink3')}" stroke-dasharray="3 3" visibility="hidden"/>`;svg.innerHTML=h;
+  const cx=svg.querySelector('#'+id+'-x');svg.onmousemove=svg.ontouchmove=e=>{const r=svg.getBoundingClientRect(),px=((e.touches?e.touches[0]:e).clientX-r.left)/r.width*W,i=Math.max(0,Math.min(labels.length-1,Math.round((px-m.l)/((W-m.l-m.r)/(labels.length-1)))));
+    cx.setAttribute('x1',x(i));cx.setAttribute('x2',x(i));cx.setAttribute('visibility','visible');showTip(host,tip,`<b>${esc(labels[i])}</b><br>`+series.map(s=>`${esc(s.n)}: ${fmt(s.v[i],1)}`).join('<br>'),x(i)/W*r.width,y(Math.max(...series.map(s=>s.v[i])))/H*r.height)};
+  svg.onmouseleave=()=>{tip.hidden=true;cx.setAttribute('visibility','hidden')}}
+function barH(id,rows,fmt,color){const host=$(id),rh=30,{W}=svgEl(host,10),lw=W<520?158:190,m={l:lw,r:64,t:10,b:10},H=m.t+m.b+rows.length*rh,{svg,tip}=svgEl(host,H);
+  const max=Math.max(...rows.map(r=>r.v)),w=v=>v/max*(W-m.l-m.r);
+  svg.innerHTML=rows.map((r,i)=>{const yy=m.t+i*rh;return `<g data-i="${i}"><rect x="0" y="${yy}" width="${W}" height="${rh}" fill="transparent"/><text class="lab" x="${m.l-8}" y="${yy+rh/2+4}" text-anchor="end">${esc(r.n)}</text><path d="M${m.l} ${yy+6}h${Math.max(w(r.v)-4,0)}a4 4 0 0 1 4 4v${rh-20}a4 4 0 0 1-4 4h${-Math.max(w(r.v)-4,0)}z" fill="${css(r.c||color)}"/><text class="lab" x="${m.l+w(r.v)+6}" y="${yy+rh/2+4}">${fmt(r.v)}</text></g>`}).join('')+`<line x1="${m.l}" x2="${m.l}" y1="${m.t}" y2="${H-m.b}" stroke="${css('--rule')}"/>`;
+  svg.querySelectorAll('g').forEach(g=>{g.onmousemove=e=>{const r=host.getBoundingClientRect(),d=rows[g.dataset.i];showTip(host,tip,`<b>${esc(d.n)}</b><br>${esc(d.t||fmt(d.v))}`,e.clientX-r.left,e.clientY-r.top)};g.onmouseleave=()=>tip.hidden=true})}
+function interval(id,rows){const host=$(id),rh=30,{W}=svgEl(host,10),lw=W<520?150:190,m={l:lw,r:24,t:10,b:30},H=m.t+m.b+rows.length*rh,{svg,tip}=svgEl(host,H);
+  const span=Math.max(...rows.map(r=>r.hi))-Math.min(...rows.map(r=>r.lo)),lo=Math.min(...rows.map(r=>r.lo),0)-span*.06,hi=Math.max(0,...rows.map(r=>r.hi))+span*.06,x=v=>m.l+(v-lo)/(hi-lo)*(W-m.l-m.r);
+  let h='';const st=(hi-lo)>40?20:(hi-lo)>4?1:.5;for(let v=Math.ceil(lo/st)*st;v<=hi;v+=st){h+=`<line x1="${x(v)}" x2="${x(v)}" y1="${m.t}" y2="${H-m.b}" stroke="${css(v==0?'--ink3':'--grid')}"/><text x="${x(v)}" y="${H-10}" text-anchor="middle">${(v>0?'+':'')+v.toFixed(0)}</text>`}
+  h+=rows.map((r,i)=>{const y=m.t+i*rh+rh/2;return `<g data-i="${i}"><rect x="0" y="${y-rh/2}" width="${W}" height="${rh}" fill="transparent"/><text class="lab" x="${m.l-10}" y="${y+4}" text-anchor="end">${esc(r.n)}</text><line x1="${x(r.lo)}" x2="${x(r.hi)}" y1="${y}" y2="${y}" stroke="${css(r.c||'--s1')}" stroke-width="2"/><circle cx="${x(r.v)}" cy="${y}" r="5.5" fill="${css(r.c||'--s1')}" stroke="${css('--surface')}" stroke-width="2"/></g>`}).join('');svg.innerHTML=h;
+  svg.querySelectorAll('g').forEach(g=>{g.onmousemove=e=>{const b=host.getBoundingClientRect(),r=rows[g.dataset.i];showTip(host,tip,`<b>${esc(r.n)}</b><br>${r.t}`,e.clientX-b.left,e.clientY-b.top)};g.onmouseleave=()=>tip.hidden=true})}
+function draw(){
+  const S=D.summary,L=S.latest_cost_china,Y=S.cell_cost_year_ago_china,names={NMC811:'NMC 811',NMC622:'NMC 622',NCA:'NCA',LFP:'LFP',NFPP:'Sodium-ion'},dn={lithium_carbonate:'Lithium carbonate',nickel:'Nickel',cobalt:'Cobalt',manganese:'Manganese',copper:'Copper',aluminium:'Aluminium'};
+  const ch=k=>L[k].cell_cost-Y[k],sg=v=>(v>=0?'+':'-')+'$'+Math.abs(v).toFixed(1),pc=v=>(v>=0?'+':'')+(v*100).toFixed(0)+'%',li=S.prices_latest.lithium_carbonate*1000,be=S.sodium_breakeven_lithium_carbonate_usd_t;
+  $('range').textContent=`IMF Primary Commodity Prices · ${S.first_month} to ${S.latest_month} · built ${D.built}`;
+  $('findings').innerHTML=[`An NMC 811 cell costs about $${L.NMC811.cell_cost.toFixed(0)} per kWh to make in China at ${S.latest_month} prices, up ${sg(ch('NMC811')).slice(1)} in a year; LFP costs $${L.LFP.cell_cost.toFixed(0)}, up ${sg(ch('LFP')).slice(1)}.`,`Lithium accounts for ${pct(S.attribution_yoy.NMC811.lithium_carbonate/S.attribution_yoy.NMC811.total,0)} of the NMC rise and ${pct(S.attribution_yoy.LFP.lithium_carbonate/S.attribution_yoy.LFP.total,0)} of the LFP rise.`,`Sodium-ion matches LFP on cost when lithium carbonate is at $${Math.round(be/100)/10}k per ton; the current estimate is $${Math.round(li/100)/10}k.`,`At 2025 US sales volumes, the 12-month move adds about ${usdc(S.total_annual_change_usd)} a year to automakers' battery-metal bill at market prices.`].map(t=>`<li>${t}</li>`).join('');
+  $('kpis').innerHTML=[['NMC 811 cell','$'+L.NMC811.cell_cost.toFixed(1),sg(ch('NMC811'))+' per kWh in 12 months'],['LFP cell','$'+L.LFP.cell_cost.toFixed(1),sg(ch('LFP'))+' per kWh in 12 months'],['Sodium-ion cell','$'+L.NFPP.cell_cost.toFixed(1),sg(ch('NFPP'))+' per kWh in 12 months'],['Lithium carbonate, est.','$'+(li/1000).toFixed(1)+'k',pc(S.price_change_yoy.lithium_carbonate)+' in 12 months, per ton'],['Cobalt','$'+S.prices_latest.cobalt.toFixed(1)+'k',pc(S.price_change_yoy.cobalt)+' in 12 months, per ton']].map(a=>`<div class="kpi"><span class="l">${a[0]}</span><span class="v">${a[1]}</span><span class="n">${a[2]}</span></div>`).join('');
+  const H=D.history,mo=H.months,pk=k=>Math.max(...H[k]),pm=k=>mo[H[k].indexOf(pk(k))];
+  $('hist-text').textContent=`Modelled cost of a cell made in China, per kWh. The 2022 spike is lithium: NMC 811 peaked at $${pk('NMC811').toFixed(0)} in ${pm('NMC811')} and LFP at $${pk('LFP').toFixed(0)}. Sodium-ion barely moves because it uses none of the three volatile metals. A US-made NMC 811 cell is $${S.latest_cell_cost_us.NMC811.toFixed(0)} today on this model's regional assumptions.`;
+  legend('lg-hist',[['NMC 811','--s1'],['LFP','--s2'],['Sodium-ion','--s3']]);
+  lineChart('c-hist',mo,[{n:'NMC 811',c:'--s1',v:H.NMC811},{n:'LFP',c:'--s2',v:H.LFP},{n:'Sodium-ion',c:'--s3',v:H.NFPP}],v=>'$'+Math.round(v));
+  const A=S.attribution_yoy;
+  $('attr-text').textContent=`From ${S.year_ago_month} to ${S.latest_month}. The split is exact, not estimated: cost is a weighted sum of the six prices, so each price change times its weight gives that input's share.`;
+  [['a1','NMC811'],['a2','LFP']].forEach(([id,k])=>{$('h-'+id).textContent=`${names[k]}: ${sg(A[k].total)} per kWh`;barH('c-'+id,Object.keys(dn).filter(d=>Math.abs(A[k][d])>0.005).map(d=>({n:dn[d],v:Math.max(A[k][d],0),t:`${sg(A[k][d])} per kWh · price ${pc(S.price_change_yoy[d])}`})).sort((a,b)=>b.v-a.v),v=>'+$'+v.toFixed(2),'--s1')});
+  const dr=Object.keys(dn);
+  $('coef').innerHTML='<tr><th>Chemistry</th>'+dr.map(d=>`<th class="n">${dn[d]}</th>`).join('')+'<th class="n">+10% lithium</th><th class="n">+10% nickel</th><th class="n">+10% cobalt</th></tr>'+D.coef.map(r=>`<tr><td>${names[r.chemistry]}</td>`+dr.map(d=>`<td class="n">${r['usd_kwh_per_usd_kg_'+d].toFixed(3)}</td>`).join('')+['lithium_carbonate','nickel','cobalt'].map(d=>`<td class="n">$${r['usd_kwh_per_10pct_'+d].toFixed(2)}</td>`).join('')+'</tr>').join('');
+  const B=S.backtest,R=S.cost_at_risk;
+  $('risk-text').textContent=`Simulated by resampling ${S.months} months of joint metal-price history, scaled to current volatility. For NMC 811 the middle 90% of outcomes runs from ${sg(R.NMC811.p05)} to ${sg(R.NMC811.p95)} per kWh. Treat that as a floor on the risk, not a bound: in a backtest over ${B.origins} past months the 90% range held ${pct(B.coverage_vol_adjusted.NMC811,0)} of the time. Without the volatility scaling it held ${pct(B.coverage_plain.NMC811,0)}; the 2021-22 lithium run was outside anything in the earlier record.`;
+  interval('c-risk',Object.keys(R).map(k=>({n:names[k],v:R[k].p50,lo:R[k].p05,hi:R[k].p95,t:`5th percentile ${sg(R[k].p05)} · median ${sg(R[k].p50)} · 95th percentile ${sg(R[k].p95)}`})));
+  $('na-text').textContent=`On this model's cost assumptions a sodium-ion cell costs the same per kWh as LFP when lithium carbonate is at $${Math.round(be).toLocaleString()} per ton. The current estimate is $${Math.round(li).toLocaleString()}, so sodium-ion is ${S.sodium_cheaper_now?'cheaper':'dearer'} by $${Math.abs(S.lfp_minus_sodium_latest).toFixed(1)} per kWh. Lithium has been above the break-even in ${pct(S.sodium_cheaper_share_of_months,0)} of months since ${S.first_month.slice(0,4)}. Sodium-ion cells are heavier and larger per kWh, which this comparison does not price.`;
+  lineChart('c-li',mo,[{n:'Lithium carbonate',c:'--s1',v:H.lithium_carbonate_usd_t}],v=>'$'+(v/1000).toFixed(0)+'k',{v:be,label:'sodium-ion break-even'});
+  const AM=D.automakers,top=AM[0],big=[...AM].sort((a,b)=>b.annual_change_usd-a.annual_change_usd)[0];
+  $('am-text').textContent=`Battery-metal content per vehicle at market prices, from 2025 US sales of ${D.vehicle_rows} models and brands (${pct(S.vehicle_sales_coverage,0)} of US EV sales). ${top.automaker} carries the largest 12-month increase per vehicle, $${Math.round(top.change_per_vehicle).toLocaleString()}, because its packs are the largest (${top.avg_pack_kwh.toFixed(0)} kWh on average). ${big.automaker} has the largest total, ${usdc(big.annual_change_usd)} a year, on volume. LFP barely protects anyone: lithium drove the move and LFP uses nearly as much lithium per kWh as NMC.`;
+  $('h-am').textContent=`Increase in battery-metal cost per vehicle, ${S.year_ago_month} to ${S.latest_month}`;
+  barH('c-am',AM.map(r=>({n:r.automaker,v:r.change_per_vehicle,t:`+$${Math.round(r.change_per_vehicle).toLocaleString()} per vehicle · ${r.avg_pack_kwh.toFixed(0)} kWh average pack · ${usdc(r.annual_change_usd)} a year`})),v=>'+$'+Math.round(v).toLocaleString(),'--s1');
+  $('am').innerHTML='<tr><th>Automaker</th><th class="n">Sales</th><th class="n">Avg kWh</th><th class="n">Metal $ / vehicle</th><th class="n">12-mo change</th><th class="n">Total / year</th><th class="n">+10% lithium</th></tr>'+AM.map(r=>`<tr><td>${esc(r.automaker)}</td><td class="n">${r.sales_2025.toLocaleString()}</td><td class="n">${r.avg_pack_kwh.toFixed(0)}</td><td class="n">$${Math.round(r.metal_cost_per_vehicle).toLocaleString()}</td><td class="n">+$${Math.round(r.change_per_vehicle).toLocaleString()}</td><td class="n">${usdc(r.annual_change_usd)}</td><td class="n">$${Math.round(r.usd_per_10pct_lithium)}</td></tr>`).join('');
+  const F=S.lithium_fit;
+  $('val-text').textContent=`None of these were used to fit the model. Cathode prices land within 6%. Cell cost comes out 10% to 18% below the published range, so the level is conservative; the gap sits in non-metal items, which do not affect how cost moves with prices. Pack figures compare model cost with market price, which includes margin. The lithium carbonate estimate fits its ${F.anchors.length} published anchors with R² ${F.r2.toFixed(3)} and a ${pct(F.mean_abs_pct_error_leave_one_out)} leave-one-out error.`;
+  $('val').innerHTML='<tr><th>Check</th><th class="n">Model</th><th class="n">Published</th><th class="n">Gap</th><th>Source</th></tr>'+D.validation.map(r=>`<tr><td>${esc(r.check)}</td><td class="n">${r.model.toFixed(1)}</td><td class="n">${r.published_low==r.published_high?r.published_low:r.published_low+' to '+r.published_high}</td><td class="n">${pc(r.gap_pct)}</td><td>${esc(r.source)}</td></tr>`).join('');
+  $('sens').innerHTML='<tr><th>Chemistry</th><th>Design input</th><th class="n">Low value</th><th class="n">High value</th><th class="n">Cost at low</th><th class="n">Cost at high</th></tr>'+D.sensitivity.map(r=>`<tr><td>${names[r.chemistry]}</td><td>${esc(r.input)}</td><td class="n">${r.low_value.toFixed(2)}</td><td class="n">${r.high_value.toFixed(2)}</td><td class="n">${sg(r.cost_at_low)}</td><td class="n">${sg(r.cost_at_high)}</td></tr>`).join('');
+  $('foot').textContent='Prices: IMF Primary Commodity Price System. Lithium carbonate anchors: USGS Mineral Commodity Summaries 2025 and 2026. Cell parameters and benchmarks: CellEst 3.0 (2025), Argonne ANL/CSE-24/1 (2024), Orangi et al. (2024), BloombergNEF 2025 price survey. Vehicle sales: Kelley Blue Book Q4 2025 EV sales report.';
+}
+draw();let rt;new ResizeObserver(()=>{clearTimeout(rt);rt=setTimeout(draw,150)}).observe(document.body);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',draw);new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+</script>

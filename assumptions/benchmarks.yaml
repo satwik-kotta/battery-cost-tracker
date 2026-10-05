@@ -1,0 +1,9 @@
+# Published figures the model is compared against. None are used to fit the cell-cost model
+# except where prices.yaml says a cathode adder is calibrated to one.
+cell_cost_usd_kwh:
+  - {chemistry: NMC811, region: China, low: 69, high: 75, window: ["2024-05", "2025-04"], source: "CellEst 3.0 total cell cost"}
+  - {chemistry: LFP,    region: China, low: 56, high: 62, window: ["2024-05", "2025-04"], source: "CellEst 3.0 total cell cost"}
+  - {chemistry: NFPP,   region: China, low: 57, high: 66, window: ["2024-09", "2025-04"], source: "CellEst 3.0 total cell cost"}
+pack_price_usd_kwh:
+  - {chemistry: LFP,    value: 81,  period: "2025", source: "BloombergNEF 2025 battery price survey, global average"}
+  - {chemistry: NMC811, value: 128, period: "2025", source: "BloombergNEF 2025 battery price survey, NMC global average"}
