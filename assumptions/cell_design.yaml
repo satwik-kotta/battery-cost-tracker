@@ -1,0 +1,21 @@
+# Cell design inputs. Every value has a source or is marked as an author assumption.
+defaults:
+  np_ratio: 1.10                 # anode capacity / cathode capacity. Author assumption, typical 1.05-1.15.
+  cathode_active_fraction: 0.96  # share of active material in the dry cathode coating. Author assumption (96/2/2).
+  anode_active_fraction: 0.96
+  lithium_excess: 1.03           # lithium salt fed per mole of lithium in the cathode. Author assumption.
+  cell_yield: 0.92               # sellable cells / cells started. Argonne reports 89% (2023) rising to 95% (2035).
+  copper_foil_um: 8
+  aluminium_foil_um: 12
+  foil_overhang: 1.10            # uncoated edges and tabs. Author assumption.
+  separator_overlap: 1.08        # separator area / coated area. Author assumption.
+  lipf6_weight_fraction: 0.125   # salt share of electrolyte mass (about 1 mol/L). Author assumption.
+cells:
+  NMC811: {cathode: NMC811, anode: graphite, areal_capacity_mAh_cm2: 4.0, electrolyte_g_per_Ah: 1.7, anode_collector: copper}
+  NMC622: {cathode: NMC622, anode: graphite, areal_capacity_mAh_cm2: 4.0, electrolyte_g_per_Ah: 1.7, anode_collector: copper}
+  NCA:    {cathode: NCA,    anode: graphite, areal_capacity_mAh_cm2: 4.0, electrolyte_g_per_Ah: 1.7, anode_collector: copper}
+  LFP:    {cathode: LFP,    anode: graphite, areal_capacity_mAh_cm2: 3.2, electrolyte_g_per_Ah: 2.4, anode_collector: copper}
+  NFPP:   {cathode: NFPP,   anode: hard_carbon, areal_capacity_mAh_cm2: 2.8, electrolyte_g_per_Ah: 2.8, anode_collector: aluminium}
+# Areal capacity and electrolyte loading are author assumptions within published ranges
+# (EV cells: 3-5 mAh/cm2; 1.5-3 g electrolyte per Ah, higher for lower-voltage chemistries).
+density_kg_m3: {copper: 8960, aluminium: 2700}

@@ -1,0 +1,15 @@
+chemistry,input,low_value,high_value,cost_at_low,cost_at_high
+NMC811,Cell yield,0.87,0.97,3.037,-2.724
+NMC811,Cathode capacity,190.0,210.0,1.937,-1.753
+NMC811,Cell voltage,3.589,3.811,1.634,-1.539
+NMC811,Lithium excess,1.0,1.06,-0.315,0.315
+NMC811,Anode/cathode ratio,1.05,1.15,-0.325,0.325
+NMC811,Electrode loading,3.4,4.6,1.338,-0.989
+NMC811,Electrolyte loading,1.36,2.04,-0.263,0.263
+LFP,Cell yield,0.87,0.97,2.173,-1.949
+LFP,Cathode capacity,149.15,164.85,0.883,-0.798
+LFP,Cell voltage,3.152,3.348,1.169,-1.101
+LFP,Lithium excess,1.0,1.06,-0.282,0.282
+LFP,Anode/cathode ratio,1.05,1.15,-0.37,0.37
+LFP,Electrode loading,2.72,3.68,1.904,-1.407
+LFP,Electrolyte loading,1.92,2.88,-0.423,0.423

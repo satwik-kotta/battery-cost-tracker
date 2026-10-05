@@ -1,0 +1,8 @@
+check,model,published_low,published_high,source,used_in_calibration,gap_pct
+"LFP cathode price, 2023 (USD/kg)",12.186,13.0,13.0,Argonne ANL/CSE-24/1 Table 11,False,-0.063
+"NMC622 cathode price, 2023 (USD/kg)",33.001,31.9,31.9,Argonne ANL/CSE-24/1 Table 11,False,0.035
+"NMC811 cell cost, China, 2024-05 to 2025-04 (USD/kWh)",59.205,69.0,75.0,CellEst 3.0 total cell cost,False,-0.178
+"LFP cell cost, China, 2024-05 to 2025-04 (USD/kWh)",51.94,56.0,62.0,CellEst 3.0 total cell cost,False,-0.12
+"NFPP cell cost, China, 2024-09 to 2025-04 (USD/kWh)",55.365,57.0,66.0,CellEst 3.0 total cell cost,False,-0.1
+"LFP pack, 2025: model cost vs market price (USD/kWh)",70.684,81.0,81.0,"BloombergNEF 2025 battery price survey, global average",False,-0.127
+"NMC811 pack, 2025: model cost vs market price (USD/kWh)",85.693,128.0,128.0,"BloombergNEF 2025 battery price survey, NMC global average",False,-0.331

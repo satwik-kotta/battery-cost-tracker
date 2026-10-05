@@ -1,0 +1,13 @@
+# Costs that do not depend on metal prices, by manufacturing region (USD per kWh of cell unless stated).
+China:
+  separator_usd_m2: 0.20     # Author assumption for Chinese supply
+  manufacturing_usd_kwh: {NMC811: 11.5, NMC622: 11.5, NCA: 11.5, LFP: 16.5, NFPP: 23.5}
+  manufacturing_source: "CellEst 3.0 production cost ranges, midpoints: NMC 811 $9-14, LFP $14-19, NFPP $20-27 per kWh (5 GWh plant, China)"
+  housing_and_other_usd_kwh: 4.0   # can, tabs, terminals. Author assumption.
+United States:
+  separator_usd_m2: 0.50     # Argonne ANL/CSE-24/1 Table 12
+  manufacturing_usd_kwh: {NMC811: 20.0, NMC622: 20.0, NCA: 20.0, LFP: 26.0, NFPP: 34.0}
+  manufacturing_source: "Author assumption: China midpoints scaled for US labor, energy and capital cost. Not from a cited table."
+  housing_and_other_usd_kwh: 5.0
+pack_integration_usd_kwh: {NMC811: 28, NMC622: 28, NCA: 28, LFP: 20, NFPP: 20}
+pack_integration_source: "Author assumption: module/pack hardware, BMS, thermal and assembly. Lower for cell-to-pack LFP designs."

@@ -1,0 +1,50 @@
+row,automaker,sales_2025,pack_kwh,share_NCA,share_NMC811,share_NMC622,share_LFP,spec_confidence,note
+Tesla Model Y,Tesla,357528,78,1,0,0,0,medium,US-built long-range packs; nickel-based cylindrical cells
+Tesla Model 3,Tesla,192440,78,1,0,0,0,medium,LFP standard-range was withdrawn from the US in late 2024
+Tesla Cybertruck,Tesla,20237,123,0,1,0,0,medium,4680 high-nickel cells
+Tesla Model S,Tesla,5889,100,1,0,0,0,high,
+Tesla Model X,Tesla,13066,100,1,0,0,0,high,
+Chevrolet Equinox EV,General Motors,57945,85,0,1,0,0,high,Ultium NCMA treated as NMC 811
+Chevrolet Blazer EV,General Motors,22637,88,0,1,0,0,medium,85 and 102 kWh packs
+Chevrolet Silverado EV,General Motors,11275,170,0,1,0,0,low,119 to 205 kWh packs
+Chevrolet BrightDrop,General Motors,4971,150,0,1,0,0,low,121 and 173 kWh packs
+Cadillac Lyriq,General Motors,20971,102,0,1,0,0,high,
+Cadillac Optiq,General Motors,12187,85,0,1,0,0,high,
+Cadillac Vistiq,General Motors,7879,102,0,1,0,0,high,
+Cadillac Escalade IQ,General Motors,8115,205,0,1,0,0,high,
+GMC (Hummer EV and Sierra EV),General Motors,23784,195,0,1,0,0,low,Brand total; model split not in the sales table
+Ford Mustang Mach-E,Ford,51620,80,0,0.5,0,0.5,low,Brand total minus other Ford EVs; 73 kWh LFP and 88 kWh NMC packs assumed half each
+Ford F-150 Lightning,Ford,27307,115,0,1,0,0,medium,98 and 131 kWh packs
+Ford E-Transit,Ford,5186,89,0,1,0,0,medium,
+Hyundai (all EVs),Hyundai Motor Group,65717,77,0,1,0,0,low,Brand total; Ioniq 5/6/9 and Kona
+Kia (all EVs),Hyundai Motor Group,33836,82,0,1,0,0,low,Brand total; EV6 EV9 Niro
+Genesis (all EVs),Hyundai Motor Group,3884,82,0,1,0,0,low,Brand total
+Honda Prologue,Honda,39194,85,0,1,0,0,high,GM Ultium pack
+Acura ZDX,Honda,12005,102,0,1,0,0,high,GM Ultium pack
+Rivian R1S,Rivian,24852,112,0,0.8,0,0.2,low,Standard pack is LFP; share assumed 20%
+Rivian R1T,Rivian,7416,112,0,0.8,0,0.2,low,Standard pack is LFP; share assumed 20%
+Rivian delivery van,Rivian,9830,100,0,0,0,1,medium,LFP pack
+BMW i4,BMW Group,20114,81,0,1,0,0,high,
+BMW i5,BMW Group,6877,84,0,1,0,0,high,
+BMW i7,BMW Group,2905,105,0,1,0,0,high,
+BMW iX,BMW Group,12587,105,0,1,0,0,medium,
+Mini (all EVs),BMW Group,2458,66,0,1,0,0,medium,Brand total
+Audi Q6 e-tron,Volkswagen Group,17481,100,0,1,0,0,high,
+Audi Q4 e-tron,Volkswagen Group,6738,82,0,1,0,0,high,
+Audi A6 e-tron,Volkswagen Group,3931,100,0,1,0,0,high,
+Audi Q8 e-tron,Volkswagen Group,869,114,0,0,1,0,medium,
+Audi e-tron GT,Volkswagen Group,1195,100,0,1,0,0,medium,
+Porsche Macan,Volkswagen Group,8799,100,0,1,0,0,high,
+Porsche Taycan,Volkswagen Group,5308,100,0,1,0,0,medium,
+Nissan Ariya,Nissan,14906,80,0,1,0,0,medium,66 and 91 kWh packs
+Nissan Leaf,Nissan,5149,50,0,0,1,0,low,
+Toyota bZ,Toyota,15609,72,0,0,1,0,low,
+Lexus (all EVs),Toyota,6400,72,0,0,1,0,low,Brand total
+Subaru Solterra,Subaru,10715,72,0,0,1,0,low,
+Mercedes (all EVs),Mercedes-Benz,12942,96,0,1,0,0,low,Brand total
+Lucid (all EVs),Lucid,12614,112,1,0,0,0,low,Brand total
+Dodge Charger Daytona,Stellantis,7421,100,0,1,0,0,medium,
+Jeep (all EVs),Stellantis,10920,100,0,1,0,0,medium,Brand total
+Volvo EX30,Volvo,5409,69,0,1,0,0,medium,
+Volvo EX90,Volvo,3913,111,0,1,0,0,high,
+Volvo EX40 and C40,Volvo,1190,82,0,1,0,0,medium,
