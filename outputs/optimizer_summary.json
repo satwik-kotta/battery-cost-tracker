@@ -1,0 +1,84 @@
+{
+  "as_of": "2026-08",
+  "risk_weight": 0.5,
+  "cvar_level": 0.95,
+  "min_stack_wh_per_kg": 280,
+  "paths": 5000,
+  "recommended_mix": {
+    "NMC811": 0.0,
+    "NMC622": 0.0,
+    "NCA": 0.788352505354131,
+    "LFP": 0.0,
+    "NFPP": 0.21164749464586888
+  },
+  "expected_cost": 73.28012386796799,
+  "cvar95_cost": 129.85242938464242,
+  "stack_wh_per_kg": 280.0,
+  "mass_shadow_price_usd_kwh_per_kg": -27.20137624555303,
+  "single_chemistry_nca": {
+    "expected": 77.96346864033598,
+    "cvar95": 149.6201076071076
+  },
+  "backtest": [
+    {
+      "strategy": "Risk aware optimiser",
+      "origins": 92,
+      "mean_realized_cost": 64.133,
+      "p95_realized_cost": 92.262,
+      "worst_realized_cost": 103.96,
+      "mean_vs_cheapest_today": 0.297,
+      "p95_vs_cheapest_today": 2.236,
+      "worst_vs_cheapest_today": 2.303,
+      "share_of_origins_cheaper": 0.228,
+      "mean_share_NFPP": 0.096
+    },
+    {
+      "strategy": "Expected cost optimiser",
+      "origins": 92,
+      "mean_realized_cost": 63.978,
+      "p95_realized_cost": 92.262,
+      "worst_realized_cost": 103.96,
+      "mean_vs_cheapest_today": 0.142,
+      "p95_vs_cheapest_today": 1.963,
+      "worst_vs_cheapest_today": 2.235,
+      "share_of_origins_cheaper": 0.13,
+      "mean_share_NFPP": 0.067
+    },
+    {
+      "strategy": "Cheapest today",
+      "origins": 92,
+      "mean_realized_cost": 63.836,
+      "p95_realized_cost": 94.07,
+      "worst_realized_cost": 103.96,
+      "mean_vs_cheapest_today": 0.0,
+      "p95_vs_cheapest_today": 0.0,
+      "worst_vs_cheapest_today": 0.0,
+      "share_of_origins_cheaper": 0.0,
+      "mean_share_NFPP": 0.039
+    },
+    {
+      "strategy": "All NCA",
+      "origins": 92,
+      "mean_realized_cost": 67.521,
+      "p95_realized_cost": 102.181,
+      "worst_realized_cost": 114.089,
+      "mean_vs_cheapest_today": 3.685,
+      "p95_vs_cheapest_today": 8.085,
+      "worst_vs_cheapest_today": 10.284,
+      "share_of_origins_cheaper": 0.0,
+      "mean_share_NFPP": 0.0
+    },
+    {
+      "strategy": "All NMC 811",
+      "origins": 92,
+      "mean_realized_cost": 67.779,
+      "p95_realized_cost": 101.82,
+      "worst_realized_cost": 115.016,
+      "mean_vs_cheapest_today": 3.942,
+      "p95_vs_cheapest_today": 8.293,
+      "worst_vs_cheapest_today": 11.101,
+      "share_of_origins_cheaper": 0.0,
+      "mean_share_NFPP": 0.0
+    }
+  ]
+}

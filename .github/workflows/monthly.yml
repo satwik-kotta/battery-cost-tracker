@@ -13,6 +13,7 @@ jobs:
       - run: pip install -r requirements.txt
       - run: python -m pytest -q tests
       - run: python -m batterycost.run --refresh
+      - run: python -m batterycost.optimize
       - run: python dashboard/build_dashboard.py
       - uses: actions/upload-artifact@v4
         with: {name: outputs, path: outputs}
