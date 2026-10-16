@@ -16,6 +16,8 @@ IMF Primary Commodity Prices (monthly: lithium, nickel, cobalt, manganese, coppe
                risk.py         vehicles.py
    12-month cost-at-risk,      exposure per EV model and by automaker
    backtested                  (Kelley Blue Book 2025 US sales)
+                  |
+            optimize.py   cheapest chemistry mix for an energy density requirement (CVaR linear program), backtested
 ```
 
 ## Results (prices through 2026-08)
@@ -55,6 +57,48 @@ IMF Primary Commodity Prices (monthly: lithium, nickel, cobalt, manganese, coppe
 
 These are replacement costs at market prices. Automakers buy under contracts with lags and hedges, so what they pay moves later and less.
 
+## Chemistry mix optimiser
+
+Question: a buyer must meet a fleet energy density requirement. What mix of the five chemistries gives the lowest cost over the next 12 months, counting price risk?
+
+Method: the price simulation gives 5,000 joint 12-month price scenarios, so 5,000 cost outcomes per chemistry. A linear program (SciPy, HiGHS) chooses shares that minimise `(1 - lambda) x expected cost + lambda x CVaR95`, where CVaR95 is the average cost in the worst 5% of scenarios (Rockafellar and Uryasev, 2000). Shares add to 1, sodium-ion is capped at 30% of volume, and the mix must meet a minimum stack energy density. `batterycost/optimize.py`, inputs in `assumptions/optimizer.yaml`.
+
+**Result at 280 Wh/kg, prices through 2026-08** (cell cost, China, USD/kWh, 12 months ahead):
+
+| Mix | Expected | CVaR95 (worst 5%) |
+|---|---|---|
+| **79% NCA, 21% sodium-ion (optimal)** | **73.3** | **129.9** |
+| 100% NCA | 78.0 | 149.6 |
+| 100% NMC 811 | 79.3 | 151.2 |
+
+The optimal mix costs 6% less than buying only NCA in expectation and 13% less in the worst 5% of outcomes.
+
+**What the requirement costs** (`outputs/optimizer_density_sweep.csv`, `outputs/optimizer_density.png`):
+
+| Minimum stack Wh/kg | Mix | Expected | CVaR95 |
+|---|---|---|---|
+| 240 | 36% NCA, 34% LFP, 30% sodium-ion | 67.5 | 114.0 |
+| 260 | 63% NCA, 7% LFP, 30% sodium-ion | 70.5 | 120.0 |
+| 280 | 79% NCA, 21% sodium-ion | 73.3 | 129.9 |
+| 300 | 90% NCA, 10% sodium-ion | 75.8 | 140.3 |
+| 320 | about 100% NCA | 77.9 | 149.5 |
+
+- **Cost and risk point the same way.** Sodium-ion and LFP are both the cheapest chemistries and the least exposed to metal prices, so moving the weight on risk from 0 to 1 changes no share at any requirement from 200 to 320 Wh/kg. The real trade-off is energy density, not risk.
+- **Risk rises faster than cost.** From 240 to 300 Wh/kg expected cost rises 12% and CVaR95 rises 23%. Between 280 and 320 Wh/kg each extra 10 Wh/kg adds about $1.0 to $1.3/kWh of expected cost and $4.4 to $5.4/kWh of CVaR95.
+- **The sodium-ion cap matters through the tail.** With no sodium-ion allowed, the 280 Wh/kg mix has almost the same expected cost (+0.6%) but a 9% higher CVaR95. See `outputs/optimizer_sensitivity.csv` for every assumption changed in turn.
+
+**Backtest** (`outputs/optimizer_backtest_summary.csv`): at each of 92 past months (2018-01 to 2025-08), optimise with only the data up to then, hold the mix for 12 months, and price it at the cell cost that actually followed. 280 Wh/kg requirement, same constraints for the first three rows.
+
+| Strategy | Mean realised cost | 95th percentile | Worst |
+|---|---|---|---|
+| Risk aware optimiser (lambda 0.5) | 64.1 | 92.3 | 104.0 |
+| Expected cost optimiser (lambda 0) | 64.0 | 92.3 | 104.0 |
+| Cheapest chemistry mix at today's prices, no simulation | 63.8 | 94.1 | 104.0 |
+| 100% NCA | 67.5 | 102.2 | 114.1 |
+| 100% NMC 811 | 67.8 | 101.8 | 115.0 |
+
+Mixing in sodium-ion and LFP beat single nickel chemistry sourcing by about 5% on average and 10% at the 95th percentile. The simulation based optimiser did **not** beat the simple cheapest-today rule: its mean was $0.30/kWh higher and its 95th percentile $1.8/kWh lower, a difference too small to tell from noise. Monthly origins overlap, so there are only about 8 independent 12-month windows. The value here comes from the constraint aware blend, not from the price simulation.
+
 ## Validation
 
 None of these figures were used to fit the model.
@@ -88,12 +132,14 @@ with a confidence column). `outputs/design_sensitivity.csv` shows how much each 
 pip install -r requirements.txt
 python -m batterycost.run --refresh     # --refresh pulls the latest IMF prices; omit to use the saved snapshot
 python dashboard/build_dashboard.py     # writes outputs/dashboard.html
-python -m pytest -q tests               # 15 tests
+python -m batterycost.optimize          # chemistry mix optimiser: writes outputs/optimizer_*; --skip-backtest for speed
+python -m pytest -q tests               # 24 tests
 ```
 
 ## Tested and not tested
 
-- Tested: full run from the saved IMF snapshot; 15 unit tests (stoichiometry against hand calculations, lithium mass balance, linearity, attribution adding up, break-even, reproducible simulation).
+- Tested: full run from the saved IMF snapshot; 24 unit tests. The original 15 cover stoichiometry against hand calculations, lithium mass balance, linearity, attribution adding up, break-even and reproducible simulation. The 9 optimiser tests cover CVaR against a hand calculation, a toy problem with a known 50/50 answer, the LP's CVaR matching the CVaR of the mix it returns, no random feasible mix beating it, constraints holding, cost never falling as the requirement tightens, infeasible requirements raising an error, and scenarios ignoring all prices after the origin.
+- Optimiser limits: every input in `assumptions/optimizer.yaml` is an author assumption (30% sodium-ion cap, 280 Wh/kg requirement, risk weight). Energy density is a stack proxy that leaves out separator, housing and tabs. Only metal prices move in the scenarios; fixed costs, volume discounts and contract terms are not modelled. Like the risk backtest, it fits the lithium price mapping once on the full anchor set.
 - Not tested: `--refresh` from this build environment, which cannot reach api.imf.org directly. The snapshot was downloaded from the same URL the script uses and the parser is tested on it.
 
 ## Sources
