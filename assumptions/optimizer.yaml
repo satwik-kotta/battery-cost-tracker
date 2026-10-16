@@ -1,0 +1,21 @@
+# Inputs to the chemistry-mix optimiser (batterycost/optimize.py).
+# Every value is an author assumption: none comes from a published source. outputs/optimizer_sensitivity.csv
+# shows how the answer moves when each is changed.
+objective:
+  risk_weight: 0.5          # lambda in (1 - lambda) * expected cost + lambda * CVaR. Set before the backtest was run, not tuned to it.
+  cvar_level: 0.95          # CVaR averages the worst 5% of simulated 12-month outcomes
+  horizon_months: 12
+requirements:
+  min_stack_energy_density_wh_kg: 280   # fleet-average requirement. Illustrative: between LFP (232) and NMC/NCA (about 320).
+share_caps:                 # largest share of kWh bought in one chemistry (supply and qualification limits)
+  NMC811: 1.0
+  NMC622: 1.0
+  NCA: 1.0
+  LFP: 1.0
+  NFPP: 0.30                # sodium-ion is new: assume at most 30% of volume can be sourced and qualified
+simulation:
+  paths: 5000
+  seed: 0
+backtest:
+  first_origin: "2018-01"
+  paths: 2000

@@ -1,0 +1,6 @@
+strategy,origins,mean_realized_cost,p95_realized_cost,worst_realized_cost,mean_vs_cheapest_today,p95_vs_cheapest_today,worst_vs_cheapest_today,share_of_origins_cheaper,mean_share_NFPP
+Risk aware optimiser,92,64.133,92.262,103.96,0.297,2.236,2.303,0.228,0.096
+Expected cost optimiser,92,63.978,92.262,103.96,0.142,1.963,2.235,0.13,0.067
+Cheapest today,92,63.836,94.07,103.96,0.0,0.0,0.0,0.0,0.039
+All NCA,92,67.521,102.181,114.089,3.685,8.085,10.284,0.0,0.0
+All NMC 811,92,67.779,101.82,115.016,3.942,8.293,11.101,0.0,0.0
