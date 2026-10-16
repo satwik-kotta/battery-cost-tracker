@@ -80,3 +80,17 @@ def backtest(metals, first_origin="2018-01", horizon=12, paths=2000, vol_adjust=
             rows.append({"origin": str(months[i]), "chemistry": c, "low": l, "high": h, "actual": a, "inside": bool(l <= a <= h)})
     bt = pd.DataFrame(rows)
     return bt, bt.groupby("chemistry").inside.mean()
+
+
+def cost_scenarios(hist, now_cost, fit, horizon=12, paths=5000, seed=0, vol_adjust=True):
+    """Simulated cell cost per kWh `horizon` months ahead, by chemistry, using only the history passed in.
+
+    Same price simulation as `cost_at_risk`; returns absolute cost (USD/kWh, paths x chemistries) instead of
+    the change, so an optimiser can work with it directly. `now_cost` is the current cell cost per kWh for each
+    chemistry in `chemistries()` order; `fit` is the lithium carbonate mapping from `fit_lithium_carbonate`.
+    """
+    floor = load("prices")["lithium_carbonate_floor_usd_t"]
+    sim = _driver_prices(simulate(hist, horizon, paths, seed=seed, vol_adjust=vol_adjust), fit["slope"], fit["intercept"], floor)
+    now = _driver_prices(hist[METALS].iloc[[-1]].to_numpy().copy(), fit["slope"], fit["intercept"], floor)[0]
+    exp = exposure_table()[DRIVERS].to_numpy()
+    return np.asarray(now_cost)[None, :] + (sim - now) @ exp.T
